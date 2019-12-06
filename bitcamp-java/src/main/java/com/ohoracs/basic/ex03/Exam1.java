@@ -24,10 +24,21 @@ public class Exam1 {
 
 
     //부동소수점 리터럴
+    System.out.println(3.14); //고정 소수점
+    System.out.println(0.314e1); // e1 = 10의 1승 ,부동소수점
+    System.out.println(31.4e-1); // e-1= 10의 -1승 , 부동소수점
 
     //논리 리터럴
+    System.out.println(true);
+    System.out.println(false);
 
     //문자 리터럴
+    System.out.println('가'); //문자 하나만 가능하다. 두개이상은 에러
+    System.out.println('A');
+
+    //문자열 리터럴
+    System.out.println("안녕하세요! 비트캠프");
+    
 
   }
 }
