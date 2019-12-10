@@ -1,6 +1,6 @@
 package com.eomcs.basic.ex03;
 
-// 문자 리터럴 (literal)
+// 문자 리터럴 (literal) - 문자코드를 이용하여 문자 출력
 // 
 public class Exam42 {
   public static void main (final String[] args){
@@ -8,7 +8,9 @@ public class Exam42 {
 
     System.out.println(0x0041); // 앞에 00은 생략 가능
     System.out.println(0xac00);
-
+    
+    //문자앞에 코드값을 넣어 값을 출력
+  
     //>> 그냥 값을 출력하면 정수를 표현한 것으로 오해한다.
 
     // >> 숫자 앞에 문자 코드임을 알리는 표시를 하라

@@ -9,6 +9,7 @@ public class Exam41 {
     System.out.println('A');
     System.out.println('가');
 
+
     // UCS-2 코드값으로 문자를 지정할 숭 ㅣㅆ다.
     // >> [ \ u ] [UCS-2 코드]
     System.out.println('\u4eba'); // [\ u] [UCS-2 코드]
