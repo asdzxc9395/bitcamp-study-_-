@@ -1,4 +1,4 @@
-package com.eomcs.basic.ex04;
+Exam51.javapackage com.eomcs.basic.ex04;
 
 public class Exam51 {
   public static void main(String[] args) {
