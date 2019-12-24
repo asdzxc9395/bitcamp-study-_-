@@ -1,9 +1,6 @@
 package com.eomcs.lms;
 
 import java.util.Scanner;
-import com.eomcs.lms.handler.BoardHandler;
-import com.eomcs.lms.handler.LessonHandler;
-import com.eomcs.lms.handler.MemberHandler;
 
 public class App {
 
@@ -11,12 +8,12 @@ public class App {
   
   public static void main(String[] args) {
 
-    //Handler의 메소드를 사용하기 전에
+    //LessonHandler의 메서드를 사용하기 전에
     //그 메서드가 작업할 때 사용할 키보드 객체를 설정해줘야 한다.
+    //그러나 객체를 설정할때 한쪽에서만 설정하는것이 좋지 크로스 참조는 해서는 안된다. 
     LessonHandler.keyboard = keyboard;
     MemberHandler.keyboard = keyboard;
     BoardHandler.keyboard = keyboard;
-    
     
     //MemberHandler의 메소드를 사용하기 전에
     // 그 메서드가 작업할 때 사용할 키보드 객체를 설정해준다.
@@ -74,9 +71,7 @@ public class App {
 
 
   }
-
-  //private static 메서드는 다른 class로 접근이 불가하다.
-
+  
 }
 
 
