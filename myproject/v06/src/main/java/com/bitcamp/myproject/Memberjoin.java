@@ -1,17 +1,14 @@
-package com.bitcamp.myproject.Memberjoin;
+package com.bitcamp.myproject;
 
 import java.util.Scanner;
-import com.bitcamp.myproject.Memberjoin.handler.MemberjoinHandler;
 
 public class Memberjoin {
   
   static Scanner keyboard = new Scanner(System.in);
   
   
-  
   public static void main(String[] args) {
-        
-    MemberjoinHandler 회원가입 = new MemberjoinHandler(keyboard);
+    MemberjoinHandler.keyboard = keyboard;
     
     String command;
     
@@ -22,13 +19,13 @@ public class Memberjoin {
       switch(command) {
         case"/add":
 
-          회원가입.addMemberjoin();
+          MemberjoinHandler.addMemberjoin();
           
           break;
 
         case "/list": 
           
-         회원가입.listMemberjoin(); 
+          MemberjoinHandler.listMemberjoin(); 
           break;
 
         default:
