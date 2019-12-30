@@ -13,7 +13,7 @@ public class Exam01_5 {
     }
     
     public static void main(String[] args) {
-        Student.count = 0;
+        Student.count = 0; // 공통변수 >> 클래스변수
         
         Student s1 = new Student();
         s1.name = "홍길동";
@@ -40,7 +40,7 @@ public class Exam01_5 {
         // => 다른 개발자가 이 코드를 봤을 때, count가 인스턴스 변수라고 착각할 것이다.
         // "클래스 변수는 클래스 이름을 사용하여 접근하라!"
         System.out.println(s1.count);
-        System.out.println(s2.count);
+        System.out.println(Student.count);
         System.out.println(s3.count);
     }
 }
