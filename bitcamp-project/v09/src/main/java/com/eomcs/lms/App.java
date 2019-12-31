@@ -42,6 +42,7 @@ public class App {
     Date date;
     Date date1;
   }
+  
   static final int Member_Size = 100;
   static Member[] members = new Member[Member_Size];// 인스턴스를 지정된 값만큼 만드는 것이 아니다@!
   static int Membercount = 0;

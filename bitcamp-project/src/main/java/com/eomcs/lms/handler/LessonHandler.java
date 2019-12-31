@@ -2,63 +2,81 @@ package com.eomcs.lms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
+import com.eomcs.lms.domain.Lesson;
 
 public class LessonHandler {
-  
-  static class Lesson {
-    int no1;
-    String title;
-    String contents;
-    Date start;
-    Date end;
-    int total;
-    int day;
-    Date date1;
+
+  LessonList lessonList = new LessonList();
+
+  public Scanner input; // 생성자
+
+  public LessonHandler(Scanner input) {
+    this.input = input;
+    lessonList = new LessonList();
   }
-  static final int Lesson_Size = 100;
-  static Lesson[] lessons = new Lesson[Lesson_Size];
-  static int Lessoncount = 0;
-  public static Scanner keyboard;
-  
-  public static void addLesson() {
+
+  public void addLesson() {
     Lesson lesson = new Lesson();
 
     System.out.print("번호? ");
-    lesson.no1 = keyboard.nextInt();
-    keyboard.nextLine();
+    lesson.setNo1(input.nextInt());
+    input.nextLine();
 
     System.out.print("수업명? ");
-    lesson.title = keyboard.nextLine();
+    lesson.setTitle(input.nextLine());
 
     System.out.print("수업내용? ");
-    lesson.contents = keyboard.nextLine();
+    lesson.setContents(input.nextLine());
 
     System.out.print("시작일? ");
-    lesson.start = Date.valueOf(keyboard.nextLine());
+    lesson.setStart(Date.valueOf(input.nextLine()));
 
     System.out.print("종료일? ");
-    lesson.end = Date.valueOf(keyboard.nextLine());
+    lesson.setEnd(Date.valueOf(input.nextLine()));
 
     System.out.print("총수업시간? ");
-    lesson.total = keyboard.nextInt();
+    lesson.setTotal(input.nextInt());
 
     System.out.print("일수업시간? ");
-    lesson.day = keyboard.nextInt();
-    keyboard.nextLine();
+    lesson.setDay(input.nextInt());
+    input.nextLine();
 
-    lesson.date1 = new Date(System.currentTimeMillis());
+    lesson.setDate1(new Date(System.currentTimeMillis()));
 
-    lessons[Lessoncount++] = lesson;
+
+    lessonList.add(lesson);
+
     System.out.println("저장하였습니다.");
   }
-  
-  public static void listLesson() {
-    for (int i = 0; i < Lessoncount; i++) {
-      Lesson l = lessons[i];
-      System.out.printf("%d, %s, %s, %s ~ %s, %d, %d\n, %s",
-          l.no1, l.title,l. contents, 
-          l.start, l.end, 
-          l.total, l.day, l.date1);
+
+  public void listLesson() {
+    Lesson[] lessons = lessonList.toArray();
+for (Lesson l : lessons)
+    {
+      System.out.printf("%d, %s, %s, %s ~ %s, %d, %d\n, %s \n",
+          l.getNo1(), l.getTitle(),l. getContents(), 
+          l.getStart(), l.getEnd(), 
+          l.getTotal(), l.getDay(), l.getDate1() );
     }
   }
+
+  public void detailLesson() {
+    System.out.println("게시물 번호? ");
+    int no = input.nextInt();
+    input.nextLine();//숫자뒤에 남은 공백 제거
+
+    Lesson lesson = lessonList.get(no);
+
+
+    if (lesson == null) {
+      System.out.println("게시물 번호가 유효하지 않습니다.");
+      return;
+    }
+
+    System.out.printf("번호: %d\n", lesson.getNo1());
+    System.out.printf("제목: %s\n", lesson.getTitle());
+    System.out.printf("등록일: %s\n", lesson.getDate1());
+  }
+
 }
+

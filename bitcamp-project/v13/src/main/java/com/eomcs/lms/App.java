@@ -13,18 +13,18 @@ public class App {
 
     //Handler의 메소드를 사용하기 전에
     //그 메서드가 작업할 때 사용할 키보드 객체를 설정해줘야 한다.
-    //LessonHandler.input = keyboard;
-    //MemberHandler.input = keyboard;
-    //BoardHandler.input = keyboard; 
- 
-    
+    LessonHandler.keyboard = keyboard;
+    MemberHandler.keyboard = keyboard;
+    BoardHandler.keyboard = keyboard;
+
     //boardHandler의 메소드가 사용할 메모리만 게시판 마다 따로 생성한다.
-    BoardHandler 게시판1 = new BoardHandler(keyboard);
-    BoardHandler 게시판2 = new BoardHandler(keyboard, 200);
-    BoardHandler 게시판3 = new BoardHandler(keyboard, 1000);
-    LessonHandler 정규수업 = new LessonHandler(keyboard);
+    BoardHandler 게시판1 = new BoardHandler();
+    BoardHandler 게시판2 = new BoardHandler();
+    BoardHandler 게시판3 = new BoardHandler();
     
-    MemberHandler 일반회원 = new MemberHandler(keyboard);
+    LessonHandler 정규수업 = new LessonHandler();
+    
+    MemberHandler 일반회원 = new MemberHandler();
     
     
     

@@ -1,20 +1,30 @@
 package com.eomcs.lms;
 
-import java.sql.Date;
 import java.util.Scanner;
+import com.eomcs.lms.handler.BoardHandler;
+import com.eomcs.lms.handler.BoardHandler2;
+import com.eomcs.lms.handler.BoardHandler3;
+import com.eomcs.lms.handler.LessonHandler;
+import com.eomcs.lms.handler.MemberHandler;
 
 public class App {
 
   static Scanner keyboard = new Scanner(System.in);
-  
+
   public static void main(String[] args) {
 
-    //LessonHandler의 메서드를 사용하기 전에
+    //Handler의 메소드를 사용하기 전에
     //그 메서드가 작업할 때 사용할 키보드 객체를 설정해줘야 한다.
-    //그러나 객체를 설정할때 한쪽에서만 설정하는것이 좋지 크로스 참조는 해서는 안된다. 
     LessonHandler.keyboard = keyboard;
     MemberHandler.keyboard = keyboard;
     BoardHandler.keyboard = keyboard;
+    BoardHandler2.keyboard = keyboard;
+    BoardHandler3.keyboard = keyboard;
+
+
+    //MemberHandler의 메소드를 사용하기 전에
+    // 그 메서드가 작업할 때 사용할 키보드 객체를 설정해준다.
+
     String command;
 
     do {
@@ -29,22 +39,38 @@ public class App {
           LessonHandler.addLesson(); 
 
           break;
+
         case "/lesson/list":
 
           LessonHandler.listLesson();
 
           break;
 
+        case "/lesson/detail":
+
+          LessonHandler.detailLesson();
+
+          break;
+
+
         case "/member/add":
 
           MemberHandler.addMember();
 
           break;
+
         case "/member/list":
 
           MemberHandler.listMember();
 
           break;
+
+        case "/member/detail":
+
+          MemberHandler.detailMember();
+
+          break;
+
         case "/board/add":
 
           BoardHandler.addBoard();
@@ -56,6 +82,49 @@ public class App {
           BoardHandler.listBoard();
 
           break;
+
+        case "/board/detail":
+
+          BoardHandler.detailBoard();
+
+          break;
+
+        case "/board2/add":
+
+          BoardHandler2.addBoard();
+
+          break;
+
+        case "/board2/list":
+
+          BoardHandler2.listBoard();
+
+          break;
+
+        case "/board2/detail":
+
+          BoardHandler2.detailBoard();
+
+          break;
+
+        case "/board3/add":
+
+          BoardHandler3.addBoard();
+
+          break;
+
+        case "/board3/list":
+
+          BoardHandler3.listBoard();
+
+          break;
+
+        case "/board3/detail":
+
+          BoardHandler3.detailBoard();
+
+          break;
+
         default:
           if(!command.equalsIgnoreCase("quit")) {
             System.out.println("실행할수 없는 명령입니다.");
@@ -68,7 +137,9 @@ public class App {
 
 
   }
-  
+
+  //private static 메서드는 다른 class로 접근이 불가하다.
+
 }
 
 

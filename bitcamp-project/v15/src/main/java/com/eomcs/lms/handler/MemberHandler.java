@@ -6,14 +6,25 @@ import com.eomcs.lms.domain.Member;
 
 
 public class MemberHandler {
+    
   
-  MemberList memberList = new MemberList();
+  //인스턴스 필드 = 논스태틱 필드
+  // >> 개별적으로 관리해야 하는 변수
+  // >> new명령을 통해 생성된다.
+  Member[] members;// 인스턴스를 지정된 값만큼 만드는 것이 아니다@!
+  int Membercount = 0;
   
   public Scanner input;
   
+  //클래스 필드 = 스태틱 필드
+  // >> 공유하는 변수
+  // >> 클래스의 메모리에 로딩될 떄 자동으로 생성된다.
+  //
+  static final int Member_Size = 100;
+  
   public MemberHandler(Scanner input) {
     this.input = input;
-    memberList = new MemberList();
+    this.members = new Member[Member_Size];
   }
 
   public void addMember() {
@@ -40,15 +51,13 @@ public class MemberHandler {
 
     member.setDate(new Date(System.currentTimeMillis()));
 
-
-    memberList.add(member);
+    this.members[this.Membercount++] = member;
     System.out.println("저장하였습니다.");
   }
   
   public void listMember() {
-    Member[] members = memberList.toArray();
-    for(Member m : members)
-    {
+    for (int i = 0; i < this.Membercount; i++ ) {
+      Member m = this.members[i];
       System.out.printf("%d, %s, %s, %s, %s\n",
           m.getNo(), m.getName(), m.getEmail(), 
           m.getNumber(), m.getDate());
@@ -59,13 +68,13 @@ public class MemberHandler {
     System.out.println("게시물 번호? ");
     int no = input.nextInt();
     input.nextLine();//숫자뒤에 남은 공백 제거
-    
-    Member member = memberList.get(no);
-    
-    if (member == null) {
+
+    if (no < 0 || no >=  this.Membercount) {
       System.out.println("게시물 번호가 유효하지 않습니다.");
       return;
     }
+
+    Member member = this.members[no];
     
     System.out.printf("번호: %d\n", member.getNo());
     System.out.printf("이름: %s\n", member.getName());

@@ -1,40 +1,48 @@
-# 11 - 패키지로 클래스를 분류하기
+# 16 - UI 코드와 데이터 처리 코드를 분리하기
 
 ## 학습 목표
 
-- 패키지를 이용하여 역할에 따라 클래스를 분류할 수 있다.
+- 캡슐화 기법을 이용하여 데이터 처리 코드를 별개의 클래스로 분리할 수 있다.
+- 배열 복제를 통해 배열의 크기를 늘릴 수 있다.
+- 역할에 따라 클래스를 분리하는 방법과 이점을 이해한다.  
 
 ## 실습 소스 및 결과
 
-- com.eomcs.lms.handler 패키지 추가
+- src/main/java/com/eomcs/lms/handler/LessonList.java 추가
+- src/main/java/com/eomcs/lms/handler/MemberList.java 추가
+- src/main/java/com/eomcs/lms/handler/BoardList.java 추가
 - src/main/java/com/eomcs/lms/handler/LessonHandler.java 변경
 - src/main/java/com/eomcs/lms/handler/MemberHandler.java 변경
 - src/main/java/com/eomcs/lms/handler/BoardHandler.java 변경
-- com.eomcs.lms.domain 패키지 추가
-- src/main/java/com/eomcs/lms/domain/Lesson.java 변경
-- src/main/java/com/eomcs/lms/domain/Member.java 변경
-- src/main/java/com/eomcs/lms/domain/Board.java 변경
-- src/main/java/com/eomcs/lms/App.java 변경
 
 ## 실습
 
-### 작업1) 데이터 타입 클래스를 별도의 패키지로 분류하라.
+### 작업1) LessonHandler에서 데이터 처리 코드를 분리하라.
 
-- 도메인 패키지 생성
-    - `com.eomcs.lms.domain` 패키지 생성
-- 도메인 클래스를 `domain` 패키지로 이동
-    - `Lesson`, `Member`, `Board` 클래스를 `com.eomcs.lms.domain` 패키지로 옮긴다.
-    - 다른 패키지에서 변수에 접근할 수 있도록 접근 제어를 `public` 으로 변경
-- 핸들러 클래스에 import 문 추가
-    - `LessonHandler`, `MemberHandler`, `BoardHandler` 클래스를 변경한다.
+- LessonList.java
+    - `LessonHandler`에서 데이터 처리 코드를 이 클래스로 옮긴다.
+    - 수업 데이터 배열을 리턴하는 toArray() 메서드를 정의한다.
+    - 수업 데이터를 저장하는 add() 메서드를 정의한다.
+    - 기본 생성자와 배열의 초기 크기를 설정하는 생성자를 정의한다.  
+- LessonHandler.java
+    - `LessonList` 클래스를 사용하여 데이터를 처리한다.
 
+### 작업2) MemberHandler에서 데이터 처리 코드를 분리하라.
 
-### 작업2) 사용자 명령을 처리하는 클래스를 별도의 패키지로 분류하라.
+- MemberList.java
+    - `MemberHandler`에서 데이터 처리 코드를 이 클래스로 옮긴다.
+    - 회원 데이터 배열을 리턴하는 toArray() 메서드를 정의한다.
+    - 회원 데이터를 저장하는 add() 메서드를 정의한다.
+    - 기본 생성자와 배열의 초기 크기를 설정하는 생성자를 정의한다.  
+- MemberHandler.java
+    - `MemberList` 클래스를 사용하여 데이터를 처리한다.
 
-- 핸들러 패키지 생성
-    - `com.eomcs.lms.handler` 패키지 생성
-- 핸들러 클래스를 `handler` 패키지로 이동
-    - `LessonHandler`, `MemberHandler`, `BoardHandler` 클래스를 `com.eomcs.lms.handler` 패키지로 옮긴다.
-    - 다른 패키지에서 변수에 접근할 수 있도록 접근 제어를 `public` 으로 변경
-- App.java 변경
-    - 핸들러 클래스에 대해 import 문 추가
+### 작업3) BoardHandler에서 데이터 처리 코드를 분리하라.
+
+- BoardList.java
+    - `BoardHandler`에서 데이터 처리 코드를 이 클래스로 옮긴다.
+    - 게시물 데이터 배열을 리턴하는 toArray() 메서드를 정의한다.
+    - 게시물 데이터를 저장하는 add() 메서드를 정의한다.
+    - 기본 생성자와 배열의 초기 크기를 설정하는 생성자를 정의한다.  
+- BoardHandler.java
+    - `BoardList` 클래스를 사용하여 데이터를 처리한다.
