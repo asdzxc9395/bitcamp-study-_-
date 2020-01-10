@@ -1,6 +1,6 @@
 package com.eomcs.oop.ex05.f;
 
-public class A /*extends Object*/ {
+public class A /*extends Object << 수퍼클래스*/ {
     int v1;
     
     A() {

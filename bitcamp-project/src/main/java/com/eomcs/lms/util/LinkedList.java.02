@@ -1,0 +1,9 @@
+package com.eomcs.algorithm.data_structure.linkedlist.step1;
+
+public class LinkedList {
+  static class Node {
+    Object value; // 어떤 값이라도 저장할수 있는 오브잭트 변수 만들고
+    Node next;  // 노드 클래스의 변수 만든다.
+  }
+
+}

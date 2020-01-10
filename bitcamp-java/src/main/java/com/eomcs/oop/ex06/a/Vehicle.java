@@ -5,4 +5,3 @@ public class Vehicle {
     int capacity;
 }
 
-

@@ -1,0 +1,31 @@
+package com.eomcs.lms.util;
+
+public class ArrayList2 {
+  
+  private static final int DEFAULT_CAPACITY = 100;
+  Object[] elementData;
+  int size;
+  
+  public ArrayList2() {
+
+    this.elementData = new Object[DEFAULT_CAPACITY];
+  }
+  
+  public ArrayList2(int initialCapacity) {
+    if (initialCapacity < DEFAULT_CAPACITY) {
+      this.elementData = new Object[DEFAULT_CAPACITY];
+    } else {
+      this.elementData = new Object[DEFAULT_CAPACITY];
+    }
+    
+    this.elementData = new Object[initialCapacity];
+  }
+  
+  public void add(Object e) {
+    this.elementData[this.size++] = e; // e를 1개선언시 1개가늘어 2개가 된다.
+  }
+  
+  public Object get(int index) {
+    return this.elementData[index];
+  }
+}

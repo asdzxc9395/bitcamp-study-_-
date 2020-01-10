@@ -1,5 +1,5 @@
 // 캡슐화(encapsulation) - 필요한 이유
-package com.eomcs.oop.ex07.a;
+package com.eomcs.oop.ex07.b;
 
 public class Exam01_1 {
     

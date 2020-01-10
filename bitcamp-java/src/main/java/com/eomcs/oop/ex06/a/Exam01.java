@@ -19,8 +19,12 @@ public class Exam01 {
         // 그래서 v2를 "다형적 변수"의 기능을 갖고 있다 말한다. 
         Vehicle v2 = null;
         v2 = b; // OK
+        v2.model = "티코";
+        v2.capacity = 5;
+        //v2.engine = "1"; // 컴파일 오류
         v2 = c; // OK
         v2 = s; // OK
+        v2 = t; // OK
         
         Bike b2 = null;
         //b2 = v; // 컴파일 오류!

@@ -1,0 +1,65 @@
+package com.eomcs.algorithm.data_structure.linkedlist.step1;
+
+public class LinkedList {
+
+  Node first;
+
+  Node last;
+
+  int size;
+
+  public void add(Object value) {
+    Node newNode = new Node();
+    newNode.value = value;
+
+    if (first == null) {
+      last = first = newNode;
+    } else {
+      last.next = newNode;
+      last = newNode;
+    }
+    this.size++;
+  }
+
+
+  public Object get(int index) {
+    if (index < 0 || index >= this.size) 
+      return null;
+
+    Node cursor = first;
+    for (int i = 0; i < index; i++) {
+      cursor = cursor.next;
+    }
+
+    return cursor.value;
+  }
+
+  public void add(int index, Object value) {
+    if (index < 0 || index >= this.size) 
+      return ;
+
+    Node newNode = new Node();
+    newNode.value = value;
+
+    Node cursor = first;
+    for (int i = 0; i < index -1 ; i++) {
+      cursor = cursor.next; // 삽입 위치 전 노트를 찾는다.
+    } //지정된 위치에 삽입하여야 하므로 index-1
+    
+    if (index == 0) {
+      newNode.next = first;
+      first = newNode;
+    } else {
+      newNode.next = cursor.next; // 기존노들은 새 노들이된다.
+      cursor.next = newNode; // 
+    }
+    this.size++;
+  }
+
+
+  static class Node {
+    Object value; // 어떤 값이라도 저장할수 있는 오브잭트 변수 만들고
+    Node next;  // 노드 클래스의 변수 만든다.
+  }
+
+}

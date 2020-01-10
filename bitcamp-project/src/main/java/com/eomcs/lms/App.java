@@ -4,6 +4,7 @@ import java.util.Scanner;
 import com.eomcs.lms.handler.BoardHandler;
 import com.eomcs.lms.handler.LessonHandler;
 import com.eomcs.lms.handler.MemberHandler;
+import com.eomcs.lms.util.Prompt;
 
 public class App {
 
@@ -11,22 +12,12 @@ public class App {
 
   public static void main(String[] args) {
 
-    //Handler의 메소드를 사용하기 전에
-    //그 메서드가 작업할 때 사용할 키보드 객체를 설정해줘야 한다.
-    //LessonHandler.input = keyboard;
-    //MemberHandler.input = keyboard;
-    //BoardHandler.input = keyboard; 
- 
+    Prompt prompt = new Prompt(keyboard);
     
     //boardHandler의 메소드가 사용할 메모리만 게시판 마다 따로 생성한다.
-    BoardHandler 게시판1 = new BoardHandler(keyboard);
-    BoardHandler 게시판2 = new BoardHandler(keyboard, 200);
-    BoardHandler 게시판3 = new BoardHandler(keyboard, 1000);
-    LessonHandler 정규수업 = new LessonHandler(keyboard);
-    
-    MemberHandler 일반회원 = new MemberHandler(keyboard);
-    
-    
+    BoardHandler boardHandler = new BoardHandler(prompt);
+    LessonHandler lessonHandler = new LessonHandler(prompt);
+    MemberHandler memberHandler = new MemberHandler(prompt);
     
     String command;
 
@@ -37,92 +28,92 @@ public class App {
       switch (command) {
         case "/lesson/add":
 
-          정규수업.addLesson(); 
+          lessonHandler.addLesson(); 
 
           break;
 
         case "/lesson/list":
 
-          정규수업.listLesson();
+          lessonHandler.listLesson();
 
           break;
 
         case "/lesson/detail":
 
-          정규수업.detailLesson();
+          lessonHandler.detailLesson();
+
+          break;
+          
+        case "/lesson/update":
+
+          lessonHandler.updateLesson();
+
+          break;
+          
+        case "/lesson/delete":
+
+          lessonHandler.deleteLesson();
 
           break;
 
 
         case "/member/add":
 
-          일반회원.addMember();
+          memberHandler.addMember();
 
           break;
 
         case "/member/list":
 
-          일반회원.listMember();
+          memberHandler.listMember();
 
           break;
 
         case "/member/detail":
 
-          일반회원.detailMember();
+          memberHandler.detailMember();
+
+          break;
+          
+        case "/member/update":
+
+          memberHandler.updateMember();
+
+          break;
+          
+        case "/member/delete":
+
+          memberHandler.deleteMember();
 
           break;
 
         case "/board/add":
 
-          게시판1.addBoard();
+          boardHandler.addBoard();
 
           break;
 
         case "/board/list":
 
-          게시판1.listBoard();
 
+          boardHandler.listBoard();
           break;
 
         case "/board/detail":
 
-          게시판1.detailBoard();
+          boardHandler.detailBoard();
 
           break;
+          
+        case "/board/update":
 
-        case "/board2/add":
-
-          게시판2.addBoard();
-
-          break;
-
-        case "/board2/list":
-
-          게시판2.listBoard();
+          boardHandler.updateBoard();
 
           break;
+          
+        case "/board/delete":
 
-        case "/board2/detail":
-
-          게시판2.detailBoard();
-
-          break;
-
-        case "/board3/add":
-
-          게시판3.addBoard();
-
-          break;
-
-        case "/board3/list":
-
-          게시판3.listBoard();
-
-          break;
-
-        case "/board3/detail":
-
-          게시판3.detailBoard();
+          boardHandler.deleteBoard();
 
           break;
 

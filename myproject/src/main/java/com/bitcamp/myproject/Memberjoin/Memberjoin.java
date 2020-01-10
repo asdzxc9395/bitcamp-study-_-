@@ -1,7 +1,7 @@
 package com.bitcamp.myproject.Memberjoin;
 
 import java.util.Scanner;
-import com.bitcamp.myproject.Memberjoin.handler.MemberjoinHandler;
+import com.bitcamp.myproject.Memberjoin.handler.MemberJoinHandler;
 
 public class Memberjoin {
   
@@ -11,7 +11,7 @@ public class Memberjoin {
   
   public static void main(String[] args) {
         
-    MemberjoinHandler 회원가입 = new MemberjoinHandler(keyboard);
+    MemberJoinHandler 회원가입 = new MemberJoinHandler(keyboard);
     
     String command;
     

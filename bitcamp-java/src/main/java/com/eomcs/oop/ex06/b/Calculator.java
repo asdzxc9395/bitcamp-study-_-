@@ -1,6 +1,7 @@
 package com.eomcs.oop.ex06.b;
 
 public class Calculator {
+  
     static int plus(int a, int b) {
         return a + b;
     }

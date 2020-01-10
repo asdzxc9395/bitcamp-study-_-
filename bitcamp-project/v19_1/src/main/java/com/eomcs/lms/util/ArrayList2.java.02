@@ -1,0 +1,8 @@
+package com.eomcs.lms.util;
+
+public class ArrayList2 {
+  Object[] elementData = new Object[100];
+  int size;
+  
+
+}
