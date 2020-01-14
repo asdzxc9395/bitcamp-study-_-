@@ -1,0 +1,13 @@
+package com.eomcs.lms.util;
+
+
+public class Queue extends LinkedList<Object>{
+  
+  public void offer(Object value) {
+    
+    
+  }
+  
+  
+  
+}

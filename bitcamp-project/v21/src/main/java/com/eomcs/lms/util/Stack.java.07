@@ -1,0 +1,35 @@
+package com.eomcs.lms.util;
+
+import java.util.Arrays;
+
+public class Stack {
+
+  private static final int DEFUALT_CAPACITY = 10;;
+
+  Object[] elememtData;
+  int size;
+
+  public Stack() {
+    this.elememtData = new Object[DEFUALT_CAPACITY];
+    this.size = 0;
+  }
+
+  public void push(Object value) {
+    if (this.size == this.elememtData.length) {
+      // 배열 크기를 늘린다.
+      grow(); // 리펙토링
+    }
+    this.elememtData[size++] = value; // 값을 넣을때마다
+    // 사이즈 , 래퍼런스 변수 개수 증가 
+  }
+
+  private void grow() {
+    this.elememtData = Arrays.copyOf(elememtData, newCapacity());
+  }
+  private int newCapacity() {
+    int oldCapacity = elememtData.length;
+    int newCapactiy = oldCapacity + (oldCapacity >> 1);
+    return newCapactiy;
+  }
+
+}

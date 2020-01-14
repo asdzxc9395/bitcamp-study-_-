@@ -1,0 +1,13 @@
+package com.eomcs.lms.util;
+
+public class Stack {
+  
+  private static final int DEFUALT_CAPACITY = 10;;
+  
+  Object[] elememtData;
+  int size;
+  
+  
+  
+  
+}
