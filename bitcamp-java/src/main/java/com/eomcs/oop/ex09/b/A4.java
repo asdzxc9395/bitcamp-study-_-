@@ -15,6 +15,7 @@ public interface A4 {
     // 생략해도 된다.
     /*public static final*/ int v2 = 200;
     
+    // static {} // 스테틱 블록을 둘 수 없다.
 }
 
 

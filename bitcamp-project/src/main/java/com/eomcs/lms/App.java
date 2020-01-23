@@ -1,233 +1,249 @@
 package com.eomcs.lms;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 import com.eomcs.lms.domain.Board;
 import com.eomcs.lms.domain.Lesson;
 import com.eomcs.lms.domain.Member;
-import com.eomcs.lms.handler.BoardHandler;
-import com.eomcs.lms.handler.LessonHandler;
-import com.eomcs.lms.handler.MemberHandler;
-import com.eomcs.lms.util.LinkedList;
-import com.eomcs.lms.util.AbstractList;
+import com.eomcs.lms.handler.BoardAddCommand;
+import com.eomcs.lms.handler.BoardDeleteCommand;
+import com.eomcs.lms.handler.BoardDetailCommand;
+import com.eomcs.lms.handler.BoardListCommand;
+import com.eomcs.lms.handler.BoardUpdateCommand;
+import com.eomcs.lms.handler.Command;
+import com.eomcs.lms.handler.ComputeCommand;
+import com.eomcs.lms.handler.HelloCommand;
+import com.eomcs.lms.handler.LessonAddCommand;
+import com.eomcs.lms.handler.LessonDeleteCommand;
+import com.eomcs.lms.handler.LessonDetailCommand;
+import com.eomcs.lms.handler.LessonListCommand;
+import com.eomcs.lms.handler.LessonUpdateCommand;
+import com.eomcs.lms.handler.MemberAddCommand;
+import com.eomcs.lms.handler.MemberDeleteCommand;
+import com.eomcs.lms.handler.MemberDetailCommand;
+import com.eomcs.lms.handler.MemberListCommand;
+import com.eomcs.lms.handler.MemberUpdateCommand;
 import com.eomcs.lms.util.Prompt;
-import com.eomcs.lms.util.Queue;
-import com.eomcs.lms.util.Stack;
+import com.google.gson.Gson;
 
 public class App {
 
   static Scanner keyboard = new Scanner(System.in);
 
-  static Stack<String> commandStack = new Stack<>();
-  static Queue<String> commandQueue = new Queue<>();
+  static Deque<String> commandStack = new ArrayDeque<>();
+  static Queue<String> commandQueue = new LinkedList<>();
+
+  static List<Lesson> lessonList;
+  static List<Board> boardList;
+  static List<Member> memberList;
 
   public static void main(String[] args) {
 
-    Prompt prompt = new Prompt(keyboard);
+    // 파일에서 데이터 로딩
+    loadLessonData();
+    loadBoardData();
+    loadMemberData();
 
-    // 단지 유지보수를 좋게 하기 위해 ArrayList와 LinkedList의 공통 분모를 뽑아서
-    // 만든 클래스가 List이다.
-    // List는 클래스의 실제젝업을 하는 클래스가 아니다.
-    // 그럼에도 불구하고 개발자가 다음과 같이 List의 객체를 사용하려 한다면 막을 수 없다.
-    // 실행시 오류가 발생할 것이다.
-    // BoardHandler의 경우 아무런 작업을 수행하지 않을 것이다.
-    // => 왜? List클래스에 정의된 메서드는 아무것도 하지 않는다.
-    
-    // 해결책!
-    // 이렇게 generalization을 통해 만든 수퍼클래스의 경우 
-    // 서브 클래스에게 공통 분모를 물려주기 위한 용도이다.
-    // 이런 종류의 클래스는 직접 인스턴스를 생성하지 못하도록 해서
-    // 직접 사용을 막아야 한다.
-    // 
-    // >> 이런 용도로 사용하는 문법이 '추상 클래스(Abstract class)'이다.
-    // 
-    // List 클래스를 추상클래스(AbstraceList)로 만들면,
-    // 다음과 같이 인스턴스를 생성할 수 없다.
-    // 아예 인스턴스 생성을 원천적으로 차단하는 효과가 있다.
-    
-    //AbstractList<Board> boardList = new AbstractList<>(); // 컴파일 오류 !
-    
-    // 반드시 AbstractList의 일반 하위 객체를 정의해야 한다.
-    //
-    
-    LinkedList<Board> boardList = new LinkedList<>(); 
-    BoardHandler boardHandler = new BoardHandler(prompt, boardList);
-    LinkedList<Lesson> lessonList = new LinkedList<>(); 
-    LessonHandler lessonHandler = new LessonHandler(prompt, lessonList);
-    LinkedList<Member> memberList = new LinkedList<>(); 
-    MemberHandler memberHandler = new MemberHandler(prompt, memberList);
+    Prompt prompt = new Prompt(keyboard);
+    HashMap<String, Command> commandMap = new HashMap<>();
+
+    commandMap.put("/board/add", new BoardAddCommand(prompt, boardList));
+    commandMap.put("/board/list", new BoardListCommand(boardList));
+    commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardList));
+    commandMap.put("/board/command", new BoardUpdateCommand(prompt, boardList));
+    commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardList));
+
+    commandMap.put("/lesson/add", new LessonAddCommand(prompt, lessonList));
+    commandMap.put("/lesson/list", new LessonListCommand(lessonList));
+    commandMap.put("/lesson/detail", new LessonDetailCommand(prompt, lessonList));
+    commandMap.put("/lesson/update", new LessonUpdateCommand(prompt, lessonList));
+    commandMap.put("/lesson/delete", new LessonDeleteCommand(prompt, lessonList));
+
+    commandMap.put("/member/add", new MemberAddCommand(prompt, memberList));
+    commandMap.put("/member/list", new MemberListCommand(memberList));
+    commandMap.put("/member/detail", new MemberDetailCommand(prompt, memberList));
+    commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberList));
+    commandMap.put("/member/command", new MemberDeleteCommand(prompt, memberList));
+
+    commandMap.put("/Hello", new HelloCommand(prompt));
+    commandMap.put("/compute/plus", new ComputeCommand(prompt));
 
     String command;
 
-    do {
-      System.out.println("\n명령");
+    while (true) {
+      System.out.println("\n명령>");
       command = keyboard.nextLine();
 
       if (command.length() == 0)
         continue;
 
+      if (command.equals("quit")) {
+        System.out.println("안녕");
+        break;
+      } else if (command.equals("history")) {
+        printCommandHistory(commandStack.iterator());
+        continue;
+      } else if (command.equals("history2")) {
+        printCommandHistory(commandQueue.iterator());
+        continue;
+      }
+
       commandStack.push(command);
-      
+
       commandQueue.offer(command);
 
-      switch (command) {
-        case "/lesson/add":
-
-          lessonHandler.addLesson(); 
-
-          break;
-
-        case "/lesson/list":
-
-          lessonHandler.listLesson();
-
-          break;
-
-        case "/lesson/detail":
-
-          lessonHandler.detailLesson();
-
-          break;
-
-        case "/lesson/update":
-
-          lessonHandler.updateLesson();
-
-          break;
-
-        case "/lesson/delete":
-
-          lessonHandler.deleteLesson();
-
-          break;
+      Command commandHandler = commandMap.get(command);
 
 
-        case "/member/add":
-
-          memberHandler.addMember();
-
-          break;
-
-        case "/member/list":
-
-          memberHandler.listMember();
-
-          break;
-
-        case "/member/detail":
-
-          memberHandler.detailMember();
-
-          break;
-
-        case "/member/update":
-
-          memberHandler.updateMember();
-
-          break;
-
-        case "/member/delete":
-
-          memberHandler.deleteMember();
-
-          break;
-
-        case "/board/add":
-
-          boardHandler.addBoard();
-
-          break;
-
-        case "/board/list":
-
-
-          boardHandler.listBoard();
-          break;
-
-        case "/board/detail":
-
-          boardHandler.detailBoard();
-
-          break;
-
-        case "/board/update":
-
-          boardHandler.updateBoard();
-
-          break;
-
-        case "/board/delete":
-
-          boardHandler.deleteBoard();
-
-          break;
-
-        case "history":
-
-          printCommandHistory();
-
-          break;
-          
-        case "history2":
-
-          printCommandHistory2();
-
-          break;
-
-
-        default:
-          if(!command.equalsIgnoreCase("quit")) {
-            System.out.println("실행할수 없는 명령입니다.");
-          }
+      if (commandHandler != null) {
+        try { // 실행중 오류를 발생했을때 실행하는 명령어이다.
+          // 허나 예외의 상황의 경우 이 메서드를 실행하며 안된다. 예외가 발생할수 있는 코드
+          commandHandler.execute();
+        } catch (Exception e) {
+          System.out.printf("명령어 실행중 오류 발생 :%s\n", e.getMessage());
+        }
+      } else {
+        System.out.println("실행할수 없는 명령입니다.");
       }
-    } while (!command.equalsIgnoreCase("quit"));
-
-    System.out.println("안녕!");
+    }
     keyboard.close();
 
+    // 데이터를 파일에 저장
+    saveLessonData();
+    saveMemberData();
+    saveBoardData();
 
-  }
+  } // main()
 
-
-  private static void printCommandHistory() {
-    Stack<String> historyStack = (Stack<String>) commandStack.clone();
+  private static void printCommandHistory(Iterator<String> iterator) {
     int count = 0;
-    while (!historyStack.empty()) {
-      System.out.println(historyStack.pop());
+    while (iterator.hasNext()) {
+      System.out.println(iterator.next());
       count++;
 
       if ((count % 5) == 0) {
         System.out.println(":");
-        String str = keyboard.nextLine();
-        if (str.equalsIgnoreCase("q"));{
-        break;
-        }
-      }
-    }
-  }
-  
-  private static void printCommandHistory2() {
-    Queue<String> historyQueue = commandQueue.clone();
-    int count = 0;
-    
-    while (historyQueue.size() > 0) {
-      System.out.println(historyQueue.poll());
-      
-      if ((++count % 5) == 0) {
-        System.out.print(":");
         String str = keyboard.nextLine();
         if (str.equalsIgnoreCase("q")) {
           break;
         }
       }
     }
-    
   }
-  
+
+  private static void loadLessonData() {
+    // 데이터가 보관된 파일을 정보를 준비한다.
+    File file = new File("./lesson.json");
+
+    try (FileReader in = new FileReader(file)) {
+      /*
+       * 방법1) JSON --> List Gson json도구= new Gson();
+       *
+       * Lesson[] lessons = json도구.gson.from(in, Lesson[].glass); List<Lesson> 읽기전용LIST구현체 =
+       * Arrays.asList(배열); lessonList = new ArrayList<>(읽기전용 List구현체);
+       * 
+       */
+      lessonList = new ArrayList<>(Arrays.asList(new Gson().fromJson(in, Lesson[].class)));
+      System.out.printf("총 %d 개의 수업 데이터를 로딩했습니다.\n", lessonList.size());
+
+    } catch (IOException e) {
+      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
+      // 파일에서 데이터를 읽다가 오류가 발생하더라도
+      // 시스템을 멈추지 않고 계속 실행하게 한다.
+      // 이것이 예외처리를 하는 이유이다!!!
+    }
+  }
+
+
+  private static void saveLessonData() {
+    // 데이터가 보관된 파일을 정보를 준비한다
+    File file = new File("./lesson.json");
+
+    try (FileWriter out = new FileWriter(file)) {
+      out.write(new Gson().toJson(lessonList));
+      System.out.printf("총 %d 개의 수업 데이터를 저장했습니다.\n", lessonList.size());
+
+    } catch (IOException e) {
+      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
+
+    }
+  }
+
+
+  private static void loadBoardData() {
+    File file = new File("./board.json");
+
+
+    try (FileReader in = new FileReader(file)) {
+
+      boardList = new ArrayList<>(Arrays.asList(new Gson().fromJson(in, Board[].class)));
+
+      System.out.printf("총 %d 개의 게시물 데이터를 로딩했습니다.\n", boardList.size());
+
+    } catch (IOException e) {
+      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
+
+    }
+  }
+
+  private static void saveBoardData() {
+    File file = new File("./board.json");
+
+
+    try (FileWriter out = new FileWriter(file)) {
+      out.write(new Gson().toJson(boardList));
+      System.out.printf("총 %d 개의 게시물 데이터를 저장했습니다.\n", boardList.size());
+
+    } catch (IOException e) {
+      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
+
+    }
+  }
+
+
+
+  private static void loadMemberData() {
+    File file = new File("./Member.json");
+
+
+    try (FileReader in = new FileReader(file)) {
+      memberList = new ArrayList<>(Arrays.asList(new Gson().fromJson(in, Member[].class)));
+      System.out.printf("총 %d개의 멤버 데이터를 로딩했습니다\n", memberList.size());
+
+    } catch (IOException e) {
+      System.out.println("파일 읽기 중 오류 발생 ! - " + e.getMessage());
+
+    }
+  }
+
+  private static void saveMemberData() {
+    File file = new File("./Member.json");
+
+
+    try (FileWriter out = new FileWriter(file)) {
+      out.write(new Gson().toJson(memberList));
+      System.out.printf("총 %d 개의 멤버 데이터를 저장했습니다.\n", memberList.size());
+
+    } catch (IOException e) {
+      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
+
+    }
+  }
+
+
+
 }
-
-
-
-
-
 
 

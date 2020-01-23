@@ -15,7 +15,7 @@ package com.eomcs.lms.util;
 //
 public abstract class AbstractList<E> implements List<E>{
   
-  // List 규칙에 따라 동작하는데 필요한 필드가 있다면
+  // List 규칙에 따라 동작하는데 필요한 필드가 있아면
   // 다음과 같이 그 규칙을 따르는 클래스 쪽에 필드를 선언하면 된다.
   protected int size;
   
@@ -68,6 +68,6 @@ public abstract class AbstractList<E> implements List<E>{
 // 그냥 메서드 사용 규칙만 정의하는 것이 코드 관리에 낫기 때문이다.
 // 
 // 추상 메서드
-// >> 서브 클래스가 반드시 재정의, 수정해야 할 메서드라면 수퍼 클래스에서 정의하지 않는다.
+// >> 서브 클래스가 반드시 재정의 해야 할 메서드라면 수퍼 클래스에서 정의하지 않는다.
 // >> 또한 서브 클래스가 반드시 해당 메서드를 오버라이딩 하도록 강제하고 싶을때 사용하는 문법이다.
 

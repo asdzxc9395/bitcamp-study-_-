@@ -4,25 +4,21 @@ package com.eomcs.oop.ex06.a;
 public class Exam0511 {
 
   public static void main(String[] args) {
-    
-  
     Vehicle v = new Sedan();
     
-    // instancof 연산자?
-    // >> 래퍼런스에 들어있는 주소가 특정클래스의 인스턴스인지 검사한다.
-    // >> 또는 특정 클래스의 하위 클래스의 인스턴스인지 검사한다.
-    // >> super 클래스인 경우도 검사한다.
-    // 
-    
-    System.out.println(v instanceof Bike);
-    System.out.println(v instanceof Truck);
+    // instanceof 연산자?
+    // => 레퍼런스에 들어있는 주소가 특정 클래스의 인스턴스인지 검사한다.
+    // => 또는 그 하위 클래스의 인스턴스인지 검사한다.
+    //
     System.out.println(v instanceof Sedan);
+    System.out.println(v instanceof Car);
     System.out.println(v instanceof Vehicle);
     System.out.println(v instanceof Object);
-    System.out.println(v instanceof Car);
     
-    
+    System.out.println(v instanceof Truck);
+    System.out.println(v instanceof Bike);
   }
+
 }
 
 

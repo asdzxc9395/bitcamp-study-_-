@@ -2,7 +2,8 @@
 package com.eomcs.oop.ex10.b;
 
 public interface Servlet {
-    void init();
+    default void m7() {}
+  void init();
     void service();
     void destroy();
     String getServletInfo();

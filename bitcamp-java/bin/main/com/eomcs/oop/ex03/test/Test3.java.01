@@ -1,0 +1,22 @@
+package com.eomcs.oop.ex03.test;
+
+public class Test03 {
+  public static void main(String[] args) {
+
+    
+    String s= new String("OKOK");
+    //s.start();
+    
+    Car c1 = new Car();
+    Car c2 = new Car();// new라는 명령은 non static 메서드를만든다.
+    Car c3 = null;
+    
+
+    c3.start();//null값을 넣어 주소가 있어도 값이 없는 상태에서는 실행을 할수가없다.
+    c2.start(); // 인스턴스 메서드 >> 내장 변수 this로 받는다.
+    //Car.start(c2); >> 스태틱 메서드
+    
+    System.out.printf("c1.on = %b\n", c1.on);
+    System.out.printf("c2.on = %b\n", c2.on);
+  }
+}

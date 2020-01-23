@@ -9,10 +9,15 @@ public class Exam01 {
         
         // 레스토랑이나 농장 거축의 기본 흐름은 이미 정해져 있다.
         // 단지 착수와 완료에 대한 것만 다르다.
-        obj1.build();
+       
+        work(obj2);
         System.out.println("---------------------");
-        obj2.build();
+        work(obj1);
 
     }
-
+    static void work(Building obj) {
+   // 레스토랑이나 농장 거축의 기본 이미 수퍼클래스에 정의되어 있다.
+      // 단지 착수와 완료에 대한 것만 서브클래스에 정의되어 있다.
+      obj.build();
+    }
 }
