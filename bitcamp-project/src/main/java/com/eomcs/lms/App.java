@@ -1,19 +1,17 @@
 package com.eomcs.lms;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
+import com.eomcs.lms.context.ApplicationContextListener;
 import com.eomcs.lms.domain.Board;
 import com.eomcs.lms.domain.Lesson;
 import com.eomcs.lms.domain.Member;
@@ -23,7 +21,7 @@ import com.eomcs.lms.handler.BoardDetailCommand;
 import com.eomcs.lms.handler.BoardListCommand;
 import com.eomcs.lms.handler.BoardUpdateCommand;
 import com.eomcs.lms.handler.Command;
-import com.eomcs.lms.handler.ComputeCommand;
+import com.eomcs.lms.handler.ComputePlusCommand;
 import com.eomcs.lms.handler.HelloCommand;
 import com.eomcs.lms.handler.LessonAddCommand;
 import com.eomcs.lms.handler.LessonDeleteCommand;
@@ -35,26 +33,69 @@ import com.eomcs.lms.handler.MemberDeleteCommand;
 import com.eomcs.lms.handler.MemberDetailCommand;
 import com.eomcs.lms.handler.MemberListCommand;
 import com.eomcs.lms.handler.MemberUpdateCommand;
-import com.eomcs.lms.util.Prompt;
-import com.google.gson.Gson;
+import com.eomcs.util.Prompt;
 
 public class App {
 
-  static Scanner keyboard = new Scanner(System.in);
+  Scanner keyboard = new Scanner(System.in);
 
-  static Deque<String> commandStack = new ArrayDeque<>();
-  static Queue<String> commandQueue = new LinkedList<>();
+  Deque<String> commandStack = new ArrayDeque<>();
+  Queue<String> commandQueue = new LinkedList<>();
 
-  static List<Lesson> lessonList;
-  static List<Board> boardList;
-  static List<Member> memberList;
 
-  public static void main(String[] args) {
 
-    // 파일에서 데이터 로딩
-    loadLessonData();
-    loadBoardData();
-    loadMemberData();
+  // 옵저버 목록을 관리할 객체를 준비한다.
+  // 같은 인스턴스를 중복해서 등록하지 않드록 한다.(HashSet)
+  // Set은 등록 순서를 따지지 않는다.
+  Set<ApplicationContextListener> listeners = new HashSet<>();
+
+  // 옵저버와 공유할 값을 보관할 객체를 준비한다.
+  Map<String, Object> context = new HashMap<>();
+
+  // 옵저버를 등록할 메서드를 준비한다.
+
+  public void appApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  // 옵저버를 제거하는 메서드이다.
+
+  public void removeApplicationContextListener(ApplicationContextListener listener) {
+    listeners.remove(listener);
+  }
+
+  // 애플리케이션이 시작되면, 등록된 리스너에게 알린다.
+  private void notifyApplicationInitialized() {
+    for (ApplicationContextListener listener : listeners) {
+      // 옵저버를 실행할 때 작업 결과를 리턴 받을수 있도록 바구니에 넘긴다.
+      // 물론 옵저버에게 전달할 값이 있으면 넘기기 전에 바구니에 담도록 한다.
+      // 파라미터 Map과 같은 객체를 사용하면 이런점에서 편하다.
+      // 즉 파라미터로 값을 전달(IN)하고 리턴(OUT) 받을수 있다.
+      listener.contextInitialized(context);
+    }
+  }
+
+  // 애플리케이션이 종료되면, 등록된 리스너에게 알린다.
+  private void notifyApplicationDestoyed() {
+    for (ApplicationContextListener listener : listeners) {
+      // 옵저버를 실행할 때 작업 결과를 리턴 받을수 있도록 바구니에 넘긴다.
+      // 물론 옵저버에게 전달할 값이 있으면 넘기기 전에 바구니에 담도록 한다.
+      listener.contextDestroyed(context);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public void service() {
+
+    // 애플리케이션의 서비스가 시작되면 등록된 옵저버를 실행한다.
+    // 즉 DataLoaderListener를 실행한다.
+    notifyApplicationInitialized();
+
+    // 옵저버의 실행이 끝났으면 DataLoaderListener 옵저버가 준비한
+    // List 객체를 꺼내보자 !
+    List<Board> boardList = (List<Board>) context.get("boardList");
+    List<Member> memberList = (List<Member>) context.get("memberList");
+    List<Lesson> lessonList = (List<Lesson>) context.get("lessonList");
 
     Prompt prompt = new Prompt(keyboard);
     HashMap<String, Command> commandMap = new HashMap<>();
@@ -62,7 +103,7 @@ public class App {
     commandMap.put("/board/add", new BoardAddCommand(prompt, boardList));
     commandMap.put("/board/list", new BoardListCommand(boardList));
     commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardList));
-    commandMap.put("/board/command", new BoardUpdateCommand(prompt, boardList));
+    commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardList));
     commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardList));
 
     commandMap.put("/lesson/add", new LessonAddCommand(prompt, lessonList));
@@ -75,22 +116,23 @@ public class App {
     commandMap.put("/member/list", new MemberListCommand(memberList));
     commandMap.put("/member/detail", new MemberDetailCommand(prompt, memberList));
     commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberList));
-    commandMap.put("/member/command", new MemberDeleteCommand(prompt, memberList));
+    commandMap.put("/member/delete", new MemberDeleteCommand(prompt, memberList));
 
-    commandMap.put("/Hello", new HelloCommand(prompt));
-    commandMap.put("/compute/plus", new ComputeCommand(prompt));
+    commandMap.put("/hello", new HelloCommand(prompt));
+    commandMap.put("/compute/plus", new ComputePlusCommand(prompt));
+
 
     String command;
 
     while (true) {
-      System.out.println("\n명령>");
+      System.out.print("\n명령> ");
       command = keyboard.nextLine();
 
       if (command.length() == 0)
         continue;
 
       if (command.equals("quit")) {
-        System.out.println("안녕");
+        System.out.println("안녕!");
         break;
       } else if (command.equals("history")) {
         printCommandHistory(commandStack.iterator());
@@ -106,35 +148,34 @@ public class App {
 
       Command commandHandler = commandMap.get(command);
 
-
       if (commandHandler != null) {
-        try { // 실행중 오류를 발생했을때 실행하는 명령어이다.
-          // 허나 예외의 상황의 경우 이 메서드를 실행하며 안된다. 예외가 발생할수 있는 코드
+        try {
           commandHandler.execute();
         } catch (Exception e) {
-          System.out.printf("명령어 실행중 오류 발생 :%s\n", e.getMessage());
+          e.printStackTrace();
+          System.out.printf("명령어 실행 중 오류 발생: %s\n", e.getMessage());
         }
       } else {
-        System.out.println("실행할수 없는 명령입니다.");
+        System.out.println("실행할 수 없는 명령입니다.");
       }
     }
+
     keyboard.close();
 
     // 데이터를 파일에 저장
-    saveLessonData();
-    saveMemberData();
-    saveBoardData();
 
-  } // main()
+    notifyApplicationDestoyed();
+  }
 
-  private static void printCommandHistory(Iterator<String> iterator) {
+  // service ()
+  private void printCommandHistory(Iterator<String> iterator) {
     int count = 0;
     while (iterator.hasNext()) {
       System.out.println(iterator.next());
       count++;
 
       if ((count % 5) == 0) {
-        System.out.println(":");
+        System.out.print(":");
         String str = keyboard.nextLine();
         if (str.equalsIgnoreCase("q")) {
           break;
@@ -143,107 +184,14 @@ public class App {
     }
   }
 
-  private static void loadLessonData() {
-    // 데이터가 보관된 파일을 정보를 준비한다.
-    File file = new File("./lesson.json");
 
-    try (FileReader in = new FileReader(file)) {
-      /*
-       * 방법1) JSON --> List Gson json도구= new Gson();
-       *
-       * Lesson[] lessons = json도구.gson.from(in, Lesson[].glass); List<Lesson> 읽기전용LIST구현체 =
-       * Arrays.asList(배열); lessonList = new ArrayList<>(읽기전용 List구현체);
-       * 
-       */
-      lessonList = new ArrayList<>(Arrays.asList(new Gson().fromJson(in, Lesson[].class)));
-      System.out.printf("총 %d 개의 수업 데이터를 로딩했습니다.\n", lessonList.size());
+  public static void main(String[] args) {
+    App app = new App();
 
-    } catch (IOException e) {
-      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
-      // 파일에서 데이터를 읽다가 오류가 발생하더라도
-      // 시스템을 멈추지 않고 계속 실행하게 한다.
-      // 이것이 예외처리를 하는 이유이다!!!
-    }
+    // 애플리케이션의 상태 정보를 받을 옵저버를 등록한다.
+    app.appApplicationContextListener(new DataLoaderListener());
+    app.service();
   }
-
-
-  private static void saveLessonData() {
-    // 데이터가 보관된 파일을 정보를 준비한다
-    File file = new File("./lesson.json");
-
-    try (FileWriter out = new FileWriter(file)) {
-      out.write(new Gson().toJson(lessonList));
-      System.out.printf("총 %d 개의 수업 데이터를 저장했습니다.\n", lessonList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
-
-    }
-  }
-
-
-  private static void loadBoardData() {
-    File file = new File("./board.json");
-
-
-    try (FileReader in = new FileReader(file)) {
-
-      boardList = new ArrayList<>(Arrays.asList(new Gson().fromJson(in, Board[].class)));
-
-      System.out.printf("총 %d 개의 게시물 데이터를 로딩했습니다.\n", boardList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
-
-    }
-  }
-
-  private static void saveBoardData() {
-    File file = new File("./board.json");
-
-
-    try (FileWriter out = new FileWriter(file)) {
-      out.write(new Gson().toJson(boardList));
-      System.out.printf("총 %d 개의 게시물 데이터를 저장했습니다.\n", boardList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
-
-    }
-  }
-
-
-
-  private static void loadMemberData() {
-    File file = new File("./Member.json");
-
-
-    try (FileReader in = new FileReader(file)) {
-      memberList = new ArrayList<>(Arrays.asList(new Gson().fromJson(in, Member[].class)));
-      System.out.printf("총 %d개의 멤버 데이터를 로딩했습니다\n", memberList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 읽기 중 오류 발생 ! - " + e.getMessage());
-
-    }
-  }
-
-  private static void saveMemberData() {
-    File file = new File("./Member.json");
-
-
-    try (FileWriter out = new FileWriter(file)) {
-      out.write(new Gson().toJson(memberList));
-      System.out.printf("총 %d 개의 멤버 데이터를 저장했습니다.\n", memberList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
-
-    }
-  }
-
-
-
 }
 
 
