@@ -190,9 +190,6 @@ public class App {
 
     // 애플리케이션의 상태 정보를 받을 옵저버를 등록한다.
     app.appApplicationContextListener(new DataLoaderListener());
-    app.appApplicationContextListener(new GreetingListnener());
-
-
     app.service();
   }
 }
